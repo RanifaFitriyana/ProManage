@@ -144,38 +144,40 @@ public class LoginFrame extends javax.swing.JFrame {
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
         String username = txtUsername.getText();
-        String password = new String(txtPassword.getPassword());
+    String password = new String(txtPassword.getPassword());
 
-        try (Connection conn = DBHelper.getConnection()) {
-            String query = "SELECT password_hash FROM users WHERE username = ?";
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setString(1, username);
-            ResultSet rs = stmt.executeQuery();
+    try (Connection conn = DBHelper.getConnection()) {
+        String query = "SELECT password_hash FROM users WHERE username = ?";
+        PreparedStatement stmt = conn.prepareStatement(query);
+        stmt.setString(1, username);
+        ResultSet rs = stmt.executeQuery();
 
-            if (rs.next()) {
-                String stored = rs.getString("password_hash");
-                String[] parts = stored.split(":");
-                String hashFromDB = parts[0];
-                String saltFromDB = parts[1];
+        if (rs.next()) {
+            String stored = rs.getString("password_hash");
+            String[] parts = stored.split(":");
+            String hashFromDB = parts[0];
+            String saltFromDB = parts[1];
 
-                String hashInput = CryptoUtil.hashPassword(password, saltFromDB);
+            String hashInput = CryptoUtil.hashPassword(password, saltFromDB);
 
-                if (hashInput.equals(hashFromDB)) {
-                    lblLoginError.setText("Login berhasil!");
-                    // TODO: lanjutkan ke dashboard/project list
-                } else {
-                    lblLoginError.setText("Password salah!");
-                }
+            if (hashInput.equals(hashFromDB)) {
+                lblLoginError.setText("Login berhasil!");
+
+                // ⬇️ Navigasi ke dashboard
+                DashboardFrame dashboard = new DashboardFrame(username); // pastikan constructor ada
+                dashboard.setVisible(true);
+                this.dispose();
+
             } else {
-                lblLoginError.setText("Username tidak ditemukan!");
+                lblLoginError.setText("Password salah!");
             }
-        } catch (Exception e) {
-            lblLoginError.setText("Terjadi kesalahan saat login.");
-            e.printStackTrace();
+        } else {
+            lblLoginError.setText("Username tidak ditemukan!");
         }
-        
-        
-
+    } catch (Exception e) {
+        lblLoginError.setText("Terjadi kesalahan saat login.");
+        e.printStackTrace();
+    }
     }//GEN-LAST:event_btnLoginActionPerformed
 
     private void btnToRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnToRegisterActionPerformed
