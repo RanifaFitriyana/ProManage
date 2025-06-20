@@ -4,17 +4,64 @@
  */
 package com.promanage.ui;
 
+import javax.swing.*; // Semua komponen GUI seperti JLabel, JTable, JButton, dll
+import java.awt.event.*; // Untuk event seperti ActionListener
+import java.sql.*; // Untuk koneksi database dan query SQL
+import com.promanage.util.DBHelper; // Untuk koneksi DB buatanmu
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JScrollPane;
+
 /**
  *
  * @author ACER
  */
 public class DashboardFrame extends javax.swing.JFrame {
 
+    private String username;
+
     /**
      * Creates new form DashboardFrame
      */
-    public DashboardFrame() {
+    public DashboardFrame(String username) {
         initComponents();
+        setLocationRelativeTo(null);
+        this.username = username;
+        lblWelcome.setText("Selamat datang, " + username);
+        tblProjects.setDefaultEditor(Object.class, null);
+        tblProjects.addMouseListener(new MouseAdapter() {
+        });
+
+        loadProjects();
+    }
+
+    DashboardFrame() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    void loadProjects() {
+        DefaultTableModel model = new DefaultTableModel();
+        model.setColumnIdentifiers(new String[]{"ID", "Nama Proyek", "Deskripsi", "Dibuat Pada"});
+        tblProjects.setModel(model);
+
+        try (Connection conn = DBHelper.getConnection()) {
+            String sql = "SELECT id, name, description, created_at FROM projects WHERE user_id = (SELECT id FROM users WHERE username = ?)";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                model.addRow(new Object[]{
+                    rs.getInt("id"),
+                    rs.getString("name"),
+                    rs.getString("description"),
+                    rs.getTimestamp("created_at")
+                });
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Gagal memuat proyek!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**
@@ -34,7 +81,7 @@ public class DashboardFrame extends javax.swing.JFrame {
         btnOpenProject = new javax.swing.JButton();
         btnDeleteProject = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
-        JScrollPane = new javax.swing.JScrollPane();
+        scrollPaneProjects = new javax.swing.JScrollPane();
         tblProjects = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -44,6 +91,11 @@ public class DashboardFrame extends javax.swing.JFrame {
         lblWelcome.setText("Selamat Datang, ");
 
         btnLogout.setText("Logout");
+        btnLogout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLogoutActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -69,10 +121,20 @@ public class DashboardFrame extends javax.swing.JFrame {
         getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_START);
 
         btnAddProject.setText("Tambah Proyek");
+        btnAddProject.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddProjectActionPerformed(evt);
+            }
+        });
 
         btnOpenProject.setText("Buka Proyek");
 
         btnDeleteProject.setText("Hapus Proyek");
+        btnDeleteProject.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteProjectActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -104,16 +166,21 @@ public class DashboardFrame extends javax.swing.JFrame {
 
         tblProjects.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {},
+                {},
+                {},
+                {}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+
             }
         ));
-        JScrollPane.setViewportView(tblProjects);
+        tblProjects.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblProjectsMouseClicked(evt);
+            }
+        });
+        scrollPaneProjects.setViewportView(tblProjects);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -121,14 +188,14 @@ public class DashboardFrame extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(JScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE)
+                .addComponent(scrollPaneProjects, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(JScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(scrollPaneProjects, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(120, 120, 120))
         );
 
@@ -137,43 +204,53 @@ public class DashboardFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(DashboardFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(DashboardFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(DashboardFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(DashboardFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
+        this.dispose();
+        new LoginFrame().setVisible(true);
+    }//GEN-LAST:event_btnLogoutActionPerformed
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new DashboardFrame().setVisible(true);
+    private void btnAddProjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddProjectActionPerformed
+        this.setVisible(false); // sembunyikan dashboard dulu
+        new AddProjectFrame(username, this).setVisible(true);
+    }//GEN-LAST:event_btnAddProjectActionPerformed
+
+    private void tblProjectsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblProjectsMouseClicked
+        int row = tblProjects.getSelectedRow();
+        if (row != -1) {
+            String projectName = tblProjects.getValueAt(row, 1).toString();
+            System.out.println("Proyek yang diklik: " + projectName);
+        }
+    }//GEN-LAST:event_tblProjectsMouseClicked
+
+    private void btnDeleteProjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteProjectActionPerformed
+        int selectedRow = tblProjects.getSelectedRow();
+
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Pilih proyek yang ingin dihapus.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(this, "Apakah kamu yakin ingin menghapus proyek ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            int projectId = (int) tblProjects.getValueAt(selectedRow, 0); // ambil ID dari kolom pertama
+
+            try (Connection conn = DBHelper.getConnection()) {
+                String sql = "DELETE FROM projects WHERE id = ?";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setInt(1, projectId);
+                stmt.executeUpdate();
+
+                JOptionPane.showMessageDialog(this, "Proyek berhasil dihapus.");
+                loadProjects(); // refresh tabel
+            } catch (SQLException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Gagal menghapus proyek!", "Error", JOptionPane.ERROR_MESSAGE);
             }
-        });
-    }
+        }
+    }//GEN-LAST:event_btnDeleteProjectActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JScrollPane JScrollPane;
     private javax.swing.JButton btnAddProject;
     private javax.swing.JButton btnDeleteProject;
     private javax.swing.JButton btnLogout;
@@ -182,6 +259,8 @@ public class DashboardFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel lblWelcome;
+    private javax.swing.JScrollPane scrollPaneProjects;
     private javax.swing.JTable tblProjects;
     // End of variables declaration//GEN-END:variables
+
 }
