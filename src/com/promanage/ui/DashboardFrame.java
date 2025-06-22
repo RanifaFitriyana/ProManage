@@ -77,12 +77,13 @@ public class DashboardFrame extends javax.swing.JFrame {
         lblWelcome = new javax.swing.JLabel();
         btnLogout = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
-        btnAddProject = new javax.swing.JButton();
         btnOpenProject = new javax.swing.JButton();
         btnDeleteProject = new javax.swing.JButton();
+        btnEditProject = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         scrollPaneProjects = new javax.swing.JScrollPane();
         tblProjects = new javax.swing.JTable();
+        btnAddProject = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -120,13 +121,6 @@ public class DashboardFrame extends javax.swing.JFrame {
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_START);
 
-        btnAddProject.setText("Tambah Proyek");
-        btnAddProject.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAddProjectActionPerformed(evt);
-            }
-        });
-
         btnOpenProject.setText("Buka Proyek");
 
         btnDeleteProject.setText("Hapus Proyek");
@@ -136,27 +130,34 @@ public class DashboardFrame extends javax.swing.JFrame {
             }
         });
 
+        btnEditProject.setText("Edit Proyek");
+        btnEditProject.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditProjectActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnAddProject)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnEditProject)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
                 .addComponent(btnOpenProject)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(52, 52, 52)
                 .addComponent(btnDeleteProject)
-                .addContainerGap(60, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(24, 24, 24)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnAddProject)
                     .addComponent(btnOpenProject)
-                    .addComponent(btnDeleteProject))
+                    .addComponent(btnDeleteProject)
+                    .addComponent(btnEditProject))
                 .addContainerGap(53, Short.MAX_VALUE))
         );
 
@@ -182,6 +183,13 @@ public class DashboardFrame extends javax.swing.JFrame {
         });
         scrollPaneProjects.setViewportView(tblProjects);
 
+        btnAddProject.setText("Tambah Proyek");
+        btnAddProject.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddProjectActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -190,13 +198,19 @@ public class DashboardFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(scrollPaneProjects, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE)
                 .addContainerGap())
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(143, 143, 143)
+                .addComponent(btnAddProject)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(scrollPaneProjects, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(120, 120, 120))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnAddProject)
+                .addGap(85, 85, 85))
         );
 
         getContentPane().add(jPanel3, java.awt.BorderLayout.CENTER);
@@ -250,9 +264,26 @@ public class DashboardFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnDeleteProjectActionPerformed
 
+    private void btnEditProjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditProjectActionPerformed
+        int selectedRow = tblProjects.getSelectedRow();
+
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Pilih proyek yang ingin diedit.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int projectId = (int) tblProjects.getValueAt(selectedRow, 0);
+        String currentName = tblProjects.getValueAt(selectedRow, 1).toString();
+        String currentDesc = tblProjects.getValueAt(selectedRow, 2).toString();
+
+        new EditProjectFrame(projectId, currentName, currentDesc, this).setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_btnEditProjectActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddProject;
     private javax.swing.JButton btnDeleteProject;
+    private javax.swing.JButton btnEditProject;
     private javax.swing.JButton btnLogout;
     private javax.swing.JButton btnOpenProject;
     private javax.swing.JPanel jPanel1;
