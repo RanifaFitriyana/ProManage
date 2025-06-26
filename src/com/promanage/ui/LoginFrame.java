@@ -164,7 +164,7 @@ public class LoginFrame extends javax.swing.JFrame {
                 lblLoginError.setText("Login berhasil!");
 
                 // ⬇️ Navigasi ke dashboard
-                DashboardFrame dashboard = new DashboardFrame(username); // pastikan constructor ada
+                DashboardFrame dashboard = new DashboardFrame(username, null); // pastikan constructor ada
                 dashboard.setVisible(true);
                 this.dispose();
 
