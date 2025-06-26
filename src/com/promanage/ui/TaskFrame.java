@@ -4,17 +4,64 @@
  */
 package com.promanage.ui;
 
+import com.promanage.util.DBHelper;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.table.DefaultTableModel;
+import java.sql.*;
+import java.awt.Desktop;
+import java.io.File;
+
 /**
  *
  * @author ACER
  */
 public class TaskFrame extends javax.swing.JFrame {
 
+    private int projectId;
+    private DashboardFrame dashboardFrame;
+
     /**
      * Creates new form TaskFrame
      */
-    public TaskFrame() {
+    public TaskFrame(int projectId, DashboardFrame dashboardFrame) {
+        setLocationRelativeTo(null);
+        this.projectId = projectId;
+        this.dashboardFrame = dashboardFrame;
         initComponents();
+        loadTasks();
+    }
+
+    public void loadTasks() {
+        DefaultTableModel model = new DefaultTableModel();
+        model.setColumnIdentifiers(new String[]{"ID", "Judul", "Deskripsi", "Status", "Deadline", "Lampiran"});
+        tblTasks.setModel(model);
+
+        try (Connection conn = com.promanage.util.DBHelper.getConnection()) {
+            String sql = "SELECT id, title, description, status, deadline, attachment_path FROM tasks WHERE project_id = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, projectId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                model.addRow(new Object[]{
+                    rs.getInt("id"),
+                    rs.getString("title"),
+                    rs.getString("description"),
+                    rs.getString("status"),
+                    rs.getDate("deadline"),
+                    rs.getString("attachment_path")
+                });
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Gagal memuat tugas!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**
@@ -35,6 +82,7 @@ public class TaskFrame extends javax.swing.JFrame {
         btnAddTask = new javax.swing.JButton();
         btnDeleteTask = new javax.swing.JButton();
         btnEditTask = new javax.swing.JButton();
+        btnViewAttachment = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -43,13 +91,18 @@ public class TaskFrame extends javax.swing.JFrame {
         lblTaskTitle.setText("Daftar Tugas");
 
         btnBack.setText("Kembali");
+        btnBack.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBackActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(159, Short.MAX_VALUE)
+                .addContainerGap(198, Short.MAX_VALUE)
                 .addComponent(lblTaskTitle)
                 .addGap(163, 163, 163))
             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -85,10 +138,32 @@ public class TaskFrame extends javax.swing.JFrame {
         scrollPaneTasks.setViewportView(tblTasks);
 
         btnAddTask.setText("Tambah Tugas");
+        btnAddTask.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddTaskActionPerformed(evt);
+            }
+        });
 
         btnDeleteTask.setText("Hapus Tugas");
+        btnDeleteTask.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteTaskActionPerformed(evt);
+            }
+        });
 
         btnEditTask.setText("Edit Tugas");
+        btnEditTask.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditTaskActionPerformed(evt);
+            }
+        });
+
+        btnViewAttachment.setText("Lihat Lampiran");
+        btnViewAttachment.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnViewAttachmentActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -99,13 +174,13 @@ public class TaskFrame extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(scrollPaneTasks, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(0, 33, Short.MAX_VALUE)
                         .addComponent(btnEditTask)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnAddTask)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnDeleteTask)
-                        .addGap(17, 17, 17)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnViewAttachment)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -117,7 +192,8 @@ public class TaskFrame extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAddTask)
                     .addComponent(btnDeleteTask)
-                    .addComponent(btnEditTask))
+                    .addComponent(btnEditTask)
+                    .addComponent(btnViewAttachment))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
 
@@ -126,46 +202,101 @@ public class TaskFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnAddTaskActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddTaskActionPerformed
+        AddTaskFrame newAddTaskFrame = new AddTaskFrame(projectId, this);
+        newAddTaskFrame.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnAddTaskActionPerformed
+
+    private void btnViewAttachmentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewAttachmentActionPerformed
+        int selectedRow = tblTasks.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Pilih tugas terlebih dahulu!");
+            return;
+        }
+
+        String filePath = tblTasks.getValueAt(selectedRow, 5).toString(); // Kolom lampiran
+        if (filePath == null || filePath.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Tugas ini tidak memiliki lampiran.");
+            return;
+        }
+
+        try {
+            File file = new File(filePath);
+            if (file.exists()) {
+                Desktop.getDesktop().open(file);
+            } else {
+                JOptionPane.showMessageDialog(this, "File tidak ditemukan: " + filePath);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Gagal membuka file.");
+        }
+    }//GEN-LAST:event_btnViewAttachmentActionPerformed
+
+    private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
+        this.dispose();
+        dashboardFrame.setVisible(true);
+    }//GEN-LAST:event_btnBackActionPerformed
+
+    private void btnDeleteTaskActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteTaskActionPerformed
+        int selectedRow = tblTasks.getSelectedRow();
+
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Pilih tugas yang ingin dihapus.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(this, "Apakah kamu yakin ingin menghapus tugas ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            int projectId = (int) tblTasks.getValueAt(selectedRow, 0); // ambil ID dari kolom pertama
+
+            try (Connection conn = DBHelper.getConnection()) {
+                String sql = "DELETE FROM projects WHERE id = ?";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setInt(1, projectId);
+                stmt.executeUpdate();
+
+                JOptionPane.showMessageDialog(this, "Tugas berhasil dihapus.");
+                loadTasks(); // refresh tabel
+            } catch (SQLException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Gagal menghapus tugas!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_btnDeleteTaskActionPerformed
+
+    private void btnEditTaskActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditTaskActionPerformed
+        int selectedRow = tblTasks.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Pilih tugas yang ingin diedit.");
+            return;
+        }
+
+        int taskId = (int) tblTasks.getValueAt(selectedRow, 0);
+        String title = tblTasks.getValueAt(selectedRow, 1).toString();
+        String desc = tblTasks.getValueAt(selectedRow, 2).toString();
+        String status = tblTasks.getValueAt(selectedRow, 3).toString();
+        java.util.Date deadline = (java.util.Date) tblTasks.getValueAt(selectedRow, 4);
+        String attachment = tblTasks.getValueAt(selectedRow, 5).toString();
+
+        EditTaskFrame editFrame = new EditTaskFrame(taskId, title, desc, status, deadline, attachment, this);
+        editFrame.setVisible(true);
+        this.setVisible(false);
+
+    }//GEN-LAST:event_btnEditTaskActionPerformed
+
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(TaskFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TaskFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(TaskFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(TaskFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new TaskFrame().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddTask;
     private javax.swing.JButton btnBack;
     private javax.swing.JButton btnDeleteTask;
     private javax.swing.JButton btnEditTask;
+    private javax.swing.JButton btnViewAttachment;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lblTaskTitle;
