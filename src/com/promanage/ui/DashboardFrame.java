@@ -18,14 +18,16 @@ import javax.swing.JScrollPane;
 public class DashboardFrame extends javax.swing.JFrame {
 
     private String username;
+    private TaskFrame taskframe;
 
     /**
      * Creates new form DashboardFrame
      */
-    public DashboardFrame(String username) {
+    public DashboardFrame(String username, TaskFrame taskframe) {
         initComponents();
         setLocationRelativeTo(null);
         this.username = username;
+        this.taskframe = taskframe;
         lblWelcome.setText("Selamat datang, " + username);
         tblProjects.setDefaultEditor(Object.class, null);
         tblProjects.addMouseListener(new MouseAdapter() {
@@ -122,6 +124,11 @@ public class DashboardFrame extends javax.swing.JFrame {
         getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_START);
 
         btnOpenProject.setText("Buka Proyek");
+        btnOpenProject.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOpenProjectActionPerformed(evt);
+            }
+        });
 
         btnDeleteProject.setText("Hapus Proyek");
         btnDeleteProject.addActionListener(new java.awt.event.ActionListener() {
@@ -279,6 +286,18 @@ public class DashboardFrame extends javax.swing.JFrame {
         new EditProjectFrame(projectId, currentName, currentDesc, this).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnEditProjectActionPerformed
+
+    private void btnOpenProjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenProjectActionPerformed
+        int selectedRow = tblProjects.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Pilih proyek yang ingin dibuka.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int projectId = (int) tblProjects.getValueAt(selectedRow, 0); // ambil ID proyek
+        this.setVisible(false);
+        new TaskFrame(projectId, this).setVisible(true);
+    }//GEN-LAST:event_btnOpenProjectActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddProject;
