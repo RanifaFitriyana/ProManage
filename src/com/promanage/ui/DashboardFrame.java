@@ -19,6 +19,7 @@ public class DashboardFrame extends javax.swing.JFrame {
 
     private String username;
     private TaskFrame taskframe;
+//    private int userId;
 
     /**
      * Creates new form DashboardFrame
@@ -27,6 +28,7 @@ public class DashboardFrame extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
         this.username = username;
+//        this.userId = userId;
         this.taskframe = taskframe;
         lblWelcome.setText("Selamat datang, " + username);
         tblProjects.setDefaultEditor(Object.class, null);
