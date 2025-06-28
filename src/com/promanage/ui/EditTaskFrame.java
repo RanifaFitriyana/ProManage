@@ -5,10 +5,8 @@
 package com.promanage.ui;
 
 import javax.swing.*;
-import java.awt.event.*;
 import java.sql.*;
 import com.promanage.util.DBHelper;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -19,41 +17,25 @@ public class EditTaskFrame extends javax.swing.JFrame {
 
     private int taskId;
     private TaskFrame taskframe;
-
-//    private JTextField txtTitle;
-//    private JTextArea txtDescription;
-    private JComboBox<String> cmbStatus;
-    private JFormattedTextField txtDeadline;
-    private JTextField txtAttachment;
-//    private JButton btnSave, btnCancel;
+//    private JComboBox<String> cmbStatus;
+//    private JFormattedTextField txtDeadline;
+//    private JTextField txtAttachment;
 
     public EditTaskFrame(int taskId, String title, String description, String status, Date deadline, String attachment, TaskFrame taskframe) {
         initComponents();
         setLocationRelativeTo(null);
         this.taskId = taskId;
         this.taskframe = taskframe;
+        
+        txtTitle.setText(title);
+        txtDescription.setText(description);
+        cbStatus.setSelectedItem(status);
+        dateDeadline.setDate(deadline);
+        txtAttachmentPath.setText(attachment);
+        
 
         taskframe.loadTasks();
     }
-
-//    private void loadTaskData() {
-//        try (Connection conn = DBHelper.getConnection()) {
-//            String sql = "SELECT title, description, status, deadline FROM tasks WHERE id = ?";
-//            PreparedStatement stmt = conn.prepareStatement(sql);
-//            stmt.setInt(1, taskId);
-//            ResultSet rs = stmt.executeQuery();
-//
-//            if (rs.next()) {
-//                txtTitle.setText(rs.getString("title"));
-//                txtDescription.setText(rs.getString("description"));
-//                cmbStatus.setSelectedItem(rs.getString("status"));
-//                txtDeadline.setText(rs.getString("deadline")); // format: yyyy-MM-dd
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            JOptionPane.showMessageDialog(this, "Gagal memuat data tugas!", "Error", JOptionPane.ERROR_MESSAGE);
-//        }
-//    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -119,7 +101,7 @@ public class EditTaskFrame extends javax.swing.JFrame {
 
         jLabel4.setText("Status");
 
-        cbStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "TODO", "IN_PROGRESS", "DONE" }));
 
         jLabel5.setText("Deadline");
 
@@ -245,6 +227,8 @@ public class EditTaskFrame extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Tugas berhasil diperbarui.");
             taskframe.loadTasks(); // ✅ gunakan variabel yang benar
             this.dispose(); // Tutup frame edit
+            taskframe.setVisible(true);
+            
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Gagal menyimpan perubahan!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -262,41 +246,41 @@ public class EditTaskFrame extends javax.swing.JFrame {
     private void chooseFile() {
         JFileChooser chooser = new JFileChooser();
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            txtAttachment.setText(chooser.getSelectedFile().getAbsolutePath());
+            txtAttachmentPath.setText(chooser.getSelectedFile().getAbsolutePath());
         }
     }
 
-    private void saveTask() {
-        String title = txtTitle.getText().trim();
-        String description = txtDescription.getText().trim();
-        String status = cmbStatus.getSelectedItem().toString();
-        String deadlineStr = txtDeadline.getText().trim();
-        String attachmentPath = txtAttachment.getText().trim();
-
-        if (title.isEmpty() || deadlineStr.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Judul dan deadline tidak boleh kosong.", "Peringatan", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        try (Connection conn = DBHelper.getConnection()) {
-            String sql = "UPDATE tasks SET title = ?, description = ?, status = ?, deadline = ?, attachment_path = ? WHERE id = ?";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, title);
-            stmt.setString(2, description);
-            stmt.setString(3, status);
-            stmt.setDate(4, java.sql.Date.valueOf(deadlineStr));
-            stmt.setString(5, attachmentPath);
-            stmt.setInt(6, taskId);
-            stmt.executeUpdate();
-
-            JOptionPane.showMessageDialog(this, "Tugas berhasil diperbarui.");
-            taskframe.loadTasks(); // refresh tabel tugas
-            dispose();
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Gagal menyimpan perubahan!", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
+//    private void saveTask() {
+//        String title = txtTitle.getText().trim();
+//        String description = txtDescription.getText().trim();
+//        String status = cmbStatus.getSelectedItem().toString();
+//        String deadlineStr = txtDeadline.getText().trim();
+//        String attachmentPath = txtAttachment.getText().trim();
+//
+//        if (title.isEmpty() || deadlineStr.isEmpty()) {
+//            JOptionPane.showMessageDialog(this, "Judul dan deadline tidak boleh kosong.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+//            return;
+//        }
+//
+//        try (Connection conn = DBHelper.getConnection()) {
+//            String sql = "UPDATE tasks SET title = ?, description = ?, status = ?, deadline = ?, attachment_path = ? WHERE id = ?";
+//            PreparedStatement stmt = conn.prepareStatement(sql);
+//            stmt.setString(1, title);
+//            stmt.setString(2, description);
+//            stmt.setString(3, status);
+//            stmt.setDate(4, java.sql.Date.valueOf(deadlineStr));
+//            stmt.setString(5, attachmentPath);
+//            stmt.setInt(6, taskId);
+//            stmt.executeUpdate();
+//
+//            JOptionPane.showMessageDialog(this, "Tugas berhasil diperbarui.");
+//            taskframe.loadTasks(); // refresh tabel tugas
+//            dispose();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            JOptionPane.showMessageDialog(this, "Gagal menyimpan perubahan!", "Error", JOptionPane.ERROR_MESSAGE);
+//        }
+//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
