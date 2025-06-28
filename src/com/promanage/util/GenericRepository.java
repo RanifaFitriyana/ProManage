@@ -4,6 +4,7 @@
  */
 package com.promanage.util;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,18 +12,26 @@ import java.util.List;
  *
  * @author ACER
  */
-public class GenericRepository<T> {
-    private List<T> dataList = new ArrayList<>();
+public class GenericRepository<T> implements Serializable {
+    private List<T> data = new ArrayList<>();
 
-    public void add(T data) {
-        dataList.add(data);
+    public void add(T item) {
+        data.add(item);
     }
 
     public List<T> getAll() {
-        return dataList;
+        return data;
     }
 
     public void clear() {
-        dataList.clear();
+        data.clear();
+    }
+
+    public int size() {
+        return data.size();
+    }
+
+    public T get(int index) {
+        return data.get(index);
     }
 }
