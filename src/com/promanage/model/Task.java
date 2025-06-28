@@ -6,6 +6,7 @@ package com.promanage.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Date;
 
 /**
  *
@@ -13,58 +14,44 @@ import java.time.LocalDate;
  */
 public class Task implements Serializable {
 
+    private int id;
     private String title;
     private String description;
-    private String status; // TODO, IN_PROGRESS, DONE
-    private LocalDate deadline;
+    private String status;
+    private Date deadline;
     private String attachmentPath;
 
-    public Task(String title, String description, String status, LocalDate deadline, String attachmentPath) {
+    public Task(int id, String title, String description, String status, Date deadline, String attachmentPath) {
+        this.id = id;
         this.title = title;
         this.description = description;
         this.status = status;
         this.deadline = deadline;
         this.attachmentPath = attachmentPath;
+    }
+
+    // Getter
+    public int getId() {
+        return id;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getDescription() {
         return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public LocalDate getDeadline() {
+    public Date getDeadline() {
         return deadline;
-    }
-
-    public void setDeadline(LocalDate deadline) {
-        this.deadline = deadline;
     }
 
     public String getAttachmentPath() {
         return attachmentPath;
     }
-
-    public void setAttachmentPath(String attachmentPath) {
-        this.attachmentPath = attachmentPath;
-    }
-
 }
