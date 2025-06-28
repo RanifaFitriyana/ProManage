@@ -4,17 +4,22 @@
  */
 package com.promanage.ui;
 
+import com.promanage.model.Task;
 import com.promanage.util.DBHelper;
-import javax.swing.JOptionPane;
+import com.promanage.util.GenericRepository;
+
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import javax.swing.table.DefaultTableModel;
-import java.sql.*;
 import java.awt.Desktop;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.sql.*;
+import java.util.Date;
 
 /**
  *
@@ -24,16 +29,17 @@ public class TaskFrame extends javax.swing.JFrame {
 
     private int projectId;
     private DashboardFrame dashboardFrame;
+    private GenericRepository<Task> taskRepo = new GenericRepository<>();
 
     /**
      * Creates new form TaskFrame
      */
     public TaskFrame(int projectId, DashboardFrame dashboardFrame) {
-        setLocationRelativeTo(null);
         this.projectId = projectId;
         this.dashboardFrame = dashboardFrame;
         initComponents();
         loadTasks();
+        setLocationRelativeTo(null);
     }
 
     public void loadTasks() {
@@ -41,26 +47,47 @@ public class TaskFrame extends javax.swing.JFrame {
         model.setColumnIdentifiers(new String[]{"ID", "Judul", "Deskripsi", "Status", "Deadline", "Lampiran"});
         tblTasks.setModel(model);
 
-        try (Connection conn = com.promanage.util.DBHelper.getConnection()) {
+        taskRepo.clear(); // Kosongkan data sebelumnya
+
+        try (Connection conn = DBHelper.getConnection()) {
             String sql = "SELECT id, title, description, status, deadline, attachment_path FROM tasks WHERE project_id = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, projectId);
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
+                Task task = new Task(
+                        rs.getInt("id"),
+                        rs.getString("title"),
+                        rs.getString("description"),
+                        rs.getString("status"),
+                        rs.getDate("deadline"),
+                        rs.getString("attachment_path")
+                );
+
+                taskRepo.add(task);
+
                 model.addRow(new Object[]{
-                    rs.getInt("id"),
-                    rs.getString("title"),
-                    rs.getString("description"),
-                    rs.getString("status"),
-                    rs.getDate("deadline"),
-                    rs.getString("attachment_path")
+                    task.getId(),
+                    task.getTitle(),
+                    task.getDescription(),
+                    task.getStatus(),
+                    task.getDeadline(),
+                    task.getAttachmentPath()
                 });
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Gagal memuat tugas!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void updateTableFromRepository() {
+        DefaultTableModel model = (DefaultTableModel) tblTasks.getModel();
+        model.setRowCount(0);
+        for (Task t : taskRepo.getAll()) {
+            model.addRow(new Object[]{t.getId(), t.getTitle(), t.getDescription(), t.getStatus(), t.getDeadline(), t.getAttachmentPath()});
         }
     }
 
@@ -76,6 +103,8 @@ public class TaskFrame extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         lblTaskTitle = new javax.swing.JLabel();
         btnBack = new javax.swing.JButton();
+        btnSaveToFile = new javax.swing.JButton();
+        btnLoadFromFile = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         scrollPaneTasks = new javax.swing.JScrollPane();
         tblTasks = new javax.swing.JTable();
@@ -97,27 +126,54 @@ public class TaskFrame extends javax.swing.JFrame {
             }
         });
 
+        btnSaveToFile.setText("Simpan ke File");
+        btnSaveToFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveToFileActionPerformed(evt);
+            }
+        });
+
+        btnLoadFromFile.setText("Muat dari File");
+        btnLoadFromFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLoadFromFileActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(198, Short.MAX_VALUE)
-                .addComponent(lblTaskTitle)
-                .addGap(163, 163, 163))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnBack)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnBack)
+                        .addGap(112, 112, 112)
+                        .addComponent(lblTaskTitle)
+                        .addGap(0, 165, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnSaveToFile)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnLoadFromFile)))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(btnBack)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
-                .addComponent(lblTaskTitle)
-                .addGap(41, 41, 41))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(btnBack))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(lblTaskTitle)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSaveToFile)
+                    .addComponent(btnLoadFromFile))
+                .addGap(12, 12, 12))
         );
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_START);
@@ -194,7 +250,7 @@ public class TaskFrame extends javax.swing.JFrame {
                     .addComponent(btnDeleteTask)
                     .addComponent(btnEditTask)
                     .addComponent(btnViewAttachment))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanel2, java.awt.BorderLayout.CENTER);
@@ -205,7 +261,7 @@ public class TaskFrame extends javax.swing.JFrame {
     private void btnAddTaskActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddTaskActionPerformed
         AddTaskFrame newAddTaskFrame = new AddTaskFrame(projectId, this);
         newAddTaskFrame.setVisible(true);
-        this.dispose();
+        this.setVisible(false);
     }//GEN-LAST:event_btnAddTaskActionPerformed
 
     private void btnViewAttachmentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewAttachmentActionPerformed
@@ -215,7 +271,7 @@ public class TaskFrame extends javax.swing.JFrame {
             return;
         }
 
-        String filePath = tblTasks.getValueAt(selectedRow, 5).toString(); // Kolom lampiran
+        String filePath = tblTasks.getValueAt(selectedRow, 5).toString();
         if (filePath == null || filePath.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Tugas ini tidak memiliki lampiran.");
             return;
@@ -250,12 +306,12 @@ public class TaskFrame extends javax.swing.JFrame {
         int confirm = JOptionPane.showConfirmDialog(this, "Apakah kamu yakin ingin menghapus tugas ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
 
         if (confirm == JOptionPane.YES_OPTION) {
-            int projectId = (int) tblTasks.getValueAt(selectedRow, 0); // ambil ID dari kolom pertama
+            int taskId = (int) tblTasks.getValueAt(selectedRow, 0); // ambil ID dari kolom pertama
 
             try (Connection conn = DBHelper.getConnection()) {
-                String sql = "DELETE FROM projects WHERE id = ?";
+                String sql = "DELETE FROM tasks WHERE id = ?";
                 PreparedStatement stmt = conn.prepareStatement(sql);
-                stmt.setInt(1, projectId);
+                stmt.setInt(1, taskId);
                 stmt.executeUpdate();
 
                 JOptionPane.showMessageDialog(this, "Tugas berhasil dihapus.");
@@ -287,6 +343,27 @@ public class TaskFrame extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btnEditTaskActionPerformed
 
+    private void btnSaveToFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveToFileActionPerformed
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("tasks.ser"))) {
+            oos.writeObject(taskRepo);
+            JOptionPane.showMessageDialog(this, "Tugas berhasil disimpan ke file!");
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Gagal menyimpan tugas.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnSaveToFileActionPerformed
+
+    private void btnLoadFromFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoadFromFileActionPerformed
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("tasks.ser"))) {
+            taskRepo = (GenericRepository<Task>) ois.readObject();
+            updateTableFromRepository();
+            JOptionPane.showMessageDialog(this, "Tugas berhasil dimuat dari file!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Gagal memuat tugas.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnLoadFromFileActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -296,6 +373,8 @@ public class TaskFrame extends javax.swing.JFrame {
     private javax.swing.JButton btnBack;
     private javax.swing.JButton btnDeleteTask;
     private javax.swing.JButton btnEditTask;
+    private javax.swing.JButton btnLoadFromFile;
+    private javax.swing.JButton btnSaveToFile;
     private javax.swing.JButton btnViewAttachment;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
