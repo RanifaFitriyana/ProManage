@@ -39,6 +39,7 @@ public class TaskFrame extends javax.swing.JFrame {
         this.dashboardFrame = dashboardFrame;
         initComponents();
         loadTasks();
+        startClock();
         setLocationRelativeTo(null);
     }
 
@@ -91,6 +92,15 @@ public class TaskFrame extends javax.swing.JFrame {
         }
     }
 
+    private void startClock() {
+        javax.swing.Timer timer = new javax.swing.Timer(1000, e -> {
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("HH:mm:ss");
+            String currentTime = sdf.format(new java.util.Date());
+            lblClock.setText("Waktu sekarang: " + currentTime);
+        });
+        timer.start();
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -105,6 +115,7 @@ public class TaskFrame extends javax.swing.JFrame {
         btnBack = new javax.swing.JButton();
         btnSaveToFile = new javax.swing.JButton();
         btnLoadFromFile = new javax.swing.JButton();
+        lblClock = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         scrollPaneTasks = new javax.swing.JScrollPane();
         tblTasks = new javax.swing.JTable();
@@ -140,6 +151,8 @@ public class TaskFrame extends javax.swing.JFrame {
             }
         });
 
+        lblClock.setText(" ");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -153,7 +166,8 @@ public class TaskFrame extends javax.swing.JFrame {
                         .addComponent(lblTaskTitle)
                         .addGap(0, 165, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(lblClock)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnSaveToFile)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnLoadFromFile)))
@@ -172,7 +186,8 @@ public class TaskFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSaveToFile)
-                    .addComponent(btnLoadFromFile))
+                    .addComponent(btnLoadFromFile)
+                    .addComponent(lblClock))
                 .addGap(12, 12, 12))
         );
 
@@ -378,6 +393,7 @@ public class TaskFrame extends javax.swing.JFrame {
     private javax.swing.JButton btnViewAttachment;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JLabel lblClock;
     private javax.swing.JLabel lblTaskTitle;
     private javax.swing.JScrollPane scrollPaneTasks;
     private javax.swing.JTable tblTasks;
