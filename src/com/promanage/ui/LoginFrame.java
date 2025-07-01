@@ -9,6 +9,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import com.promanage.util.CryptoUtil;
 import com.promanage.util.DBHelper;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 /**
  *
@@ -19,11 +22,68 @@ public class LoginFrame extends javax.swing.JFrame {
     /**
      * Creates new form LoginFrame
      */
+    private Locale currentLocale;
+    private ResourceBundle resourceBundle;
+    private boolean isChangingLanguage = false;
+
     public LoginFrame() {
         initComponents();
         setLocationRelativeTo(null);
+        cbLanguage.setSelectedIndex(0);
+        applyLanguage();
+        System.out.println("lblUsername after apply = " + lblUsername.getText());
     }
 
+    private void applyLanguage() {
+        isChangingLanguage = true;
+
+        int selectedLang = cbLanguage.getSelectedIndex();
+        String language = (selectedLang == 1) ? "id" : "en";
+        String country = (selectedLang == 1) ? "ID" : "US";
+
+        currentLocale = new Locale(language, country);
+        try {
+            resourceBundle = ResourceBundle.getBundle("com.promanage.i18n.Bundle", currentLocale);
+
+            // Debug: Periksa apakah ResourceBundle dimuat dengan benar
+            System.out.println("ResourceBundle dimuat untuk lokal: " + currentLocale);
+
+            // Set teks label dan tombol
+            lblLoginTitle.setText(resourceBundle.getString("LoginFrame.lblLoginTitle.text"));
+            lblUsername.setText(resourceBundle.getString("LoginFrame.lblUsername.text"));
+            lblPassword.setText(resourceBundle.getString("LoginFrame.lblPassword.text"));
+            btnLogin.setText(resourceBundle.getString("LoginFrame.btnLogin.text"));
+            btnToRegister.setText(resourceBundle.getString("LoginFrame.btnToRegister.text"));
+            lblLoginError.setText("");
+
+            // Perbarui model combobox tanpa memicu pendengar tindakan
+            String[] langs = {
+                resourceBundle.getString("LoginFrame.cbLanguage.0"),
+                resourceBundle.getString("LoginFrame.cbLanguage.1")
+            };
+            cbLanguage.setModel(new javax.swing.DefaultComboBoxModel<>(langs));
+            cbLanguage.setSelectedIndex(selectedLang);
+
+            // Paksa repaint keseluruhan frame
+            this.repaint();
+        } catch (MissingResourceException e) {
+            System.err.println("Sumber daya hilang: " + e.getKey());
+            e.printStackTrace();
+        }
+
+        isChangingLanguage = false;
+    }
+
+//    private void updateLanguageComboBoxLabels() {
+//        String item0 = resourceBundle.getString("LoginFrame.cbLanguage.0");
+//        String item1 = resourceBundle.getString("LoginFrame.cbLanguage.1");
+//        int selectedIndex = cbLanguage.getSelectedIndex();
+//
+//        cbLanguage.removeAllItems();
+//        cbLanguage.addItem(item0);
+//        cbLanguage.addItem(item1);
+//        cbLanguage.setSelectedIndex(selectedIndex);
+//    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -35,9 +95,10 @@ public class LoginFrame extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         lblLoginTitle = new javax.swing.JLabel();
+        cbLanguage = new javax.swing.JComboBox<>();
         jPanel2 = new javax.swing.JPanel();
         lblUsername = new javax.swing.JLabel();
-        blPassword = new javax.swing.JLabel();
+        lblPassword = new javax.swing.JLabel();
         txtUsername = new javax.swing.JTextField();
         btnLogin = new javax.swing.JButton();
         btnToRegister = new javax.swing.JButton();
@@ -50,21 +111,35 @@ public class LoginFrame extends javax.swing.JFrame {
 
         lblLoginTitle.setText("LOGIN");
 
+        cbLanguage.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "English", "Indonesia" }));
+        cbLanguage.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbLanguageActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap(184, Short.MAX_VALUE)
-                .addComponent(lblLoginTitle)
-                .addGap(181, 181, 181))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(lblLoginTitle)
+                        .addGap(181, 181, 181))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(cbLanguage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(39, 39, 39)
                 .addComponent(lblLoginTitle)
-                .addContainerGap(45, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(cbLanguage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(11, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_START);
@@ -73,7 +148,7 @@ public class LoginFrame extends javax.swing.JFrame {
 
         lblUsername.setText("Username");
 
-        blPassword.setText("Password");
+        lblPassword.setText("Password");
 
         btnLogin.setText("Login");
         btnLogin.addActionListener(new java.awt.event.ActionListener() {
@@ -107,7 +182,7 @@ public class LoginFrame extends javax.swing.JFrame {
                         .addGap(66, 66, 66)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblUsername)
-                            .addComponent(blPassword))
+                            .addComponent(lblPassword))
                         .addGap(51, 51, 51)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(txtUsername)
@@ -126,7 +201,7 @@ public class LoginFrame extends javax.swing.JFrame {
                     .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(blPassword)
+                    .addComponent(lblPassword)
                     .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -144,46 +219,49 @@ public class LoginFrame extends javax.swing.JFrame {
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
         String username = txtUsername.getText();
-    String password = new String(txtPassword.getPassword());
+        String password = new String(txtPassword.getPassword());
 
-    try (Connection conn = DBHelper.getConnection()) {
-        String query = "SELECT password_hash FROM users WHERE username = ?";
-        PreparedStatement stmt = conn.prepareStatement(query);
-        stmt.setString(1, username);
-        ResultSet rs = stmt.executeQuery();
+        try (Connection conn = DBHelper.getConnection()) {
+            String query = "SELECT password_hash FROM users WHERE username = ?";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
 
-        if (rs.next()) {
-            String stored = rs.getString("password_hash");
-            String[] parts = stored.split(":");
-            String hashFromDB = parts[0];
-            String saltFromDB = parts[1];
+            if (rs.next()) {
+                String stored = rs.getString("password_hash");
+                String[] parts = stored.split(":");
+                String hashFromDB = parts[0];
+                String saltFromDB = parts[1];
 
-            String hashInput = CryptoUtil.hashPassword(password, saltFromDB);
+                String hashInput = CryptoUtil.hashPassword(password, saltFromDB);
 
-            if (hashInput.equals(hashFromDB)) {
-                lblLoginError.setText("Login berhasil!");
-
-                // ⬇️ Navigasi ke dashboard
-                DashboardFrame dashboard = new DashboardFrame(username, null); // pastikan constructor ada
-                dashboard.setVisible(true);
-                this.dispose();
-
+                if (hashInput.equals(hashFromDB)) {
+                    lblLoginError.setText(resourceBundle.getString("LoginFrame.login.success"));
+                    new DashboardFrame(username, null).setVisible(true);
+                    this.dispose();
+                } else {
+                    lblLoginError.setText(resourceBundle.getString("LoginFrame.login.password_wrong"));
+                }
             } else {
-                lblLoginError.setText("Password salah!");
+                lblLoginError.setText(resourceBundle.getString("LoginFrame.login.username_not_found"));
             }
-        } else {
-            lblLoginError.setText("Username tidak ditemukan!");
+        } catch (Exception e) {
+            lblLoginError.setText(resourceBundle.getString("LoginFrame.login.error"));
+            e.printStackTrace();
         }
-    } catch (Exception e) {
-        lblLoginError.setText("Terjadi kesalahan saat login.");
-        e.printStackTrace();
-    }
     }//GEN-LAST:event_btnLoginActionPerformed
 
     private void btnToRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnToRegisterActionPerformed
-        this.dispose(); // Tutup LoginFrame
-        new RegisterFrame().setVisible(true); // Buka RegisterFrame
+        this.dispose();
+        new RegisterFrame().setVisible(true);
     }//GEN-LAST:event_btnToRegisterActionPerformed
+
+    private void cbLanguageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbLanguageActionPerformed
+        if (!isChangingLanguage) {
+            System.out.println("Mengubah bahasa...");
+            applyLanguage();
+        }
+    }//GEN-LAST:event_cbLanguageActionPerformed
 
     /**
      * @param args the command line arguments
@@ -221,13 +299,14 @@ public class LoginFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel blPassword;
     private javax.swing.JButton btnLogin;
     private javax.swing.JButton btnToRegister;
+    private javax.swing.JComboBox<String> cbLanguage;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lblLoginError;
     private javax.swing.JLabel lblLoginTitle;
+    private javax.swing.JLabel lblPassword;
     private javax.swing.JLabel lblUsername;
     private javax.swing.JPasswordField txtPassword;
     private javax.swing.JTextField txtUsername;
