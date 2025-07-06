@@ -73,17 +73,7 @@ public class LoginFrame extends javax.swing.JFrame {
 
         isChangingLanguage = false;
     }
-
-//    private void updateLanguageComboBoxLabels() {
-//        String item0 = resourceBundle.getString("LoginFrame.cbLanguage.0");
-//        String item1 = resourceBundle.getString("LoginFrame.cbLanguage.1");
-//        int selectedIndex = cbLanguage.getSelectedIndex();
-//
-//        cbLanguage.removeAllItems();
-//        cbLanguage.addItem(item0);
-//        cbLanguage.addItem(item1);
-//        cbLanguage.setSelectedIndex(selectedIndex);
-//    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
