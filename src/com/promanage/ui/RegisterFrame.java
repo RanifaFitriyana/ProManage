@@ -10,6 +10,9 @@ import java.sql.ResultSet;
 import com.promanage.util.CryptoUtil;
 import com.promanage.util.DBHelper;
 import javax.swing.JOptionPane;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 /**
  *
@@ -20,9 +23,56 @@ public class RegisterFrame extends javax.swing.JFrame {
     /**
      * Creates new form RegisterFrame
      */
+    private Locale currentLocale;
+    private ResourceBundle resourceBundle;
+    private boolean isChangingLanguage = false;
+
     public RegisterFrame() {
         initComponents();
         setLocationRelativeTo(null);
+        cbLanguage.setSelectedIndex(0);
+        applyLanguage();
+        System.out.println("lblUsername after apply = " + lblNewUsername.getText());
+    }
+
+    private void applyLanguage() {
+        isChangingLanguage = true;
+
+        int selectedLang = cbLanguage.getSelectedIndex();
+        String language = (selectedLang == 1) ? "id" : "en";
+        String country = (selectedLang == 1) ? "ID" : "US";
+
+        currentLocale = new Locale(language, country);
+        try {
+            resourceBundle = ResourceBundle.getBundle("com.promanage.i18n.Bundle", currentLocale);
+
+            // Debug: Periksa apakah ResourceBundle dimuat dengan benar
+            System.out.println("ResourceBundle dimuat untuk lokal: " + currentLocale);
+
+            // Set teks label dan tombol
+            lblRegisterTitle.setText(resourceBundle.getString("RegisterFrame.lblRegisterTitle.text"));
+            lblNewUsername.setText(resourceBundle.getString("RegisterFrame.lblNewUsername.text"));
+            lblNewPassword.setText(resourceBundle.getString("RegisterFrame.lblNewPassword.text"));
+            btnToLogin.setText(resourceBundle.getString("RegisterFrame.btnToLogin.text"));
+            btnRegister.setText(resourceBundle.getString("RegisterFrame.btnRegister.text"));
+            lblRegisterError.setText("");
+
+            // Perbarui model combobox tanpa memicu pendengar tindakan
+            String[] langs = {
+                resourceBundle.getString("RegisterFrame.cbLanguage.0"),
+                resourceBundle.getString("RegisterFrame.cbLanguage.1")
+            };
+            cbLanguage.setModel(new javax.swing.DefaultComboBoxModel<>(langs));
+            cbLanguage.setSelectedIndex(selectedLang);
+
+            // Paksa repaint keseluruhan frame
+            this.repaint();
+        } catch (MissingResourceException e) {
+            System.err.println("Sumber daya hilang: " + e.getKey());
+            e.printStackTrace();
+        }
+
+        isChangingLanguage = false;
     }
 
     /**
@@ -36,6 +86,7 @@ public class RegisterFrame extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         lblRegisterTitle = new javax.swing.JLabel();
+        cbLanguage = new javax.swing.JComboBox<>();
         jPanel2 = new javax.swing.JPanel();
         lblNewUsername = new javax.swing.JLabel();
         lblNewPassword = new javax.swing.JLabel();
@@ -51,21 +102,35 @@ public class RegisterFrame extends javax.swing.JFrame {
 
         lblRegisterTitle.setText("REGISTER");
 
+        cbLanguage.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "English", "Indonesia" }));
+        cbLanguage.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbLanguageActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap(177, Short.MAX_VALUE)
-                .addComponent(lblRegisterTitle)
-                .addGap(172, 172, 172))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(lblRegisterTitle)
+                        .addGap(172, 172, 172))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(cbLanguage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(42, 42, 42)
                 .addComponent(lblRegisterTitle)
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
+                .addComponent(cbLanguage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_START);
@@ -148,7 +213,7 @@ public class RegisterFrame extends javax.swing.JFrame {
         String password = new String(txtNewPassword.getPassword());
 
         if (username.isEmpty() || password.isEmpty()) {
-            lblRegisterError.setText("Username dan password wajib diisi!");
+            lblRegisterError.setText(resourceBundle.getString("RegisterFrame.register.required"));
             return;
         }
 
@@ -159,7 +224,7 @@ public class RegisterFrame extends javax.swing.JFrame {
             checkStmt.setString(1, username);
             ResultSet rs = checkStmt.executeQuery();
             if (rs.next() && rs.getInt(1) > 0) {
-                lblRegisterError.setText("Username sudah terdaftar!");
+                lblRegisterError.setText(resourceBundle.getString("RegisterFrame.register.username_exists"));
                 return;
             }
 
@@ -175,15 +240,16 @@ public class RegisterFrame extends javax.swing.JFrame {
             insertStmt.setString(2, hashWithSalt);
             insertStmt.executeUpdate();
 
-            lblRegisterError.setText("Registrasi berhasil!");
-            JOptionPane.showMessageDialog(this, "Akun berhasil dibuat!", "Info", JOptionPane.INFORMATION_MESSAGE);
+            lblRegisterError.setText(resourceBundle.getString("RegisterFrame.register.success"));
+            JOptionPane.showMessageDialog(this, resourceBundle.getString("RegisterFrame.register.success_message"),
+                    "Info", JOptionPane.INFORMATION_MESSAGE);
 
             // Opsional: kembali ke LoginFrame
             this.dispose();
             new LoginFrame().setVisible(true);
 
         } catch (Exception e) {
-            lblRegisterError.setText("Gagal menyimpan ke database.");
+            lblRegisterError.setText(resourceBundle.getString("RegisterFrame.register.error"));
             e.printStackTrace();
         }
 
@@ -193,6 +259,13 @@ public class RegisterFrame extends javax.swing.JFrame {
         this.dispose(); // Tutup RegisterFrame
         new LoginFrame().setVisible(true); // Buka LoginFrame
     }//GEN-LAST:event_btnToLoginActionPerformed
+
+    private void cbLanguageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbLanguageActionPerformed
+        if (!isChangingLanguage) {
+            System.out.println("Mengubah bahasa...");
+            applyLanguage();
+        }
+    }//GEN-LAST:event_cbLanguageActionPerformed
 
     /**
      * @param args the command line arguments
@@ -232,6 +305,7 @@ public class RegisterFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnRegister;
     private javax.swing.JButton btnToLogin;
+    private javax.swing.JComboBox<String> cbLanguage;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lblNewPassword;
