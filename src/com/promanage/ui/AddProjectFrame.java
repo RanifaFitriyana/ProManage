@@ -5,10 +5,13 @@
 package com.promanage.ui;
 
 import com.promanage.util.DBHelper;
+import com.promanage.util.LanguageManager;
+
+import javax.swing.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import javax.swing.JOptionPane;
+import java.util.ResourceBundle;
 
 /**
  *
@@ -16,14 +19,25 @@ import javax.swing.JOptionPane;
  */
 public class AddProjectFrame extends javax.swing.JFrame {
 
-    private String username;
-    private DashboardFrame dashboard;
+    private final String username;
+    private final DashboardFrame dashboard;
+    private final ResourceBundle bundle;
 
     public AddProjectFrame(String username, DashboardFrame dashboard) {
-        initComponents();
         this.username = username;
         this.dashboard = dashboard;
+        this.bundle = LanguageManager.getBundle();
+        initComponents();
         setLocationRelativeTo(null);
+        applyLanguage();
+    }
+
+    private void applyLanguage() {
+        jLabel1.setText(bundle.getString("AddProjectFrame.title"));
+        btnKembali.setText(bundle.getString("AddProjectFrame.btnBack"));
+        lblNama.setText(bundle.getString("AddProjectFrame.lblName"));
+        lblDeskripsi.setText(bundle.getString("AddProjectFrame.lblDescription"));
+        btnSimpan.setText(bundle.getString("AddProjectFrame.btnSave"));
     }
 
     /**
@@ -50,9 +64,9 @@ public class AddProjectFrame extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(0, 102, 153));
 
-        jLabel1.setText("TAMBAH PROYEK");
+        jLabel1.setText("ADD PROJECT");
 
-        btnKembali.setText("Kembali");
+        btnKembali.setText("Back");
         btnKembali.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnKembaliActionPerformed(evt);
@@ -63,14 +77,15 @@ public class AddProjectFrame extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(158, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(148, 148, 148))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(btnKembali)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(btnKembali))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(161, 161, 161)
+                        .addComponent(jLabel1)))
+                .addContainerGap(164, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -86,15 +101,15 @@ public class AddProjectFrame extends javax.swing.JFrame {
 
         jPanel2.setBackground(new java.awt.Color(204, 204, 204));
 
-        lblNama.setText("Nama Proyek");
+        lblNama.setText("Project Name");
 
-        lblDeskripsi.setText("Deskripsi");
+        lblDeskripsi.setText("Description");
 
         txtDeskripsi.setColumns(20);
         txtDeskripsi.setRows(5);
         scrollDeskripsi.setViewportView(txtDeskripsi);
 
-        btnSimpan.setText("Simpan");
+        btnSimpan.setText("Save");
         btnSimpan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSimpanActionPerformed(evt);
@@ -141,8 +156,8 @@ public class AddProjectFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnKembaliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKembaliActionPerformed
-        this.dispose(); // tutup form tambah
-        dashboard.setVisible(true); // kembali ke dashboard
+        this.dispose();
+        dashboard.setVisible(true);
     }//GEN-LAST:event_btnKembaliActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
@@ -150,7 +165,10 @@ public class AddProjectFrame extends javax.swing.JFrame {
         String deskripsi = txtDeskripsi.getText();
 
         if (nama.isEmpty() || deskripsi.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Isi semua data!", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    bundle.getString("AddProjectFrame.error.empty"),
+                    bundle.getString("AddProjectFrame.error.title"),
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -163,13 +181,16 @@ public class AddProjectFrame extends javax.swing.JFrame {
             stmt.setString(3, deskripsi);
             stmt.executeUpdate();
 
-            JOptionPane.showMessageDialog(this, "Proyek berhasil ditambahkan!");
-            this.dispose(); // Tutup form
-            dashboard.loadProjects(); // Refresh data tabel
-            dashboard.setVisible(true); // Kembali ke dashboard
+            JOptionPane.showMessageDialog(this, bundle.getString("AddProjectFrame.success"));
+            this.dispose();
+            dashboard.loadProjects();
+            dashboard.setVisible(true);
         } catch (SQLException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Gagal menyimpan proyek!", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    bundle.getString("AddProjectFrame.error.fail"),
+                    bundle.getString("AddProjectFrame.error.title"),
+                    JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnSimpanActionPerformed
 
