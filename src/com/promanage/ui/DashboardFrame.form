@@ -41,7 +41,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                   <Component id="lblWelcome" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="214" max="32767" attributes="0"/>
+                  <EmptySpace pref="249" max="32767" attributes="0"/>
                   <Component id="btnLogout" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -63,7 +63,7 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="lblWelcome">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Selamat Datang, "/>
+            <Property name="text" type="java.lang.String" value="Wellcome!"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="btnLogout">
@@ -89,7 +89,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="btnEditProject" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="49" max="32767" attributes="0"/>
+                  <EmptySpace pref="45" max="32767" attributes="0"/>
                   <Component id="btnOpenProject" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
                   <Component id="btnDeleteProject" min="-2" max="-2" attributes="0"/>
@@ -114,7 +114,7 @@
       <SubComponents>
         <Component class="javax.swing.JButton" name="btnOpenProject">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Buka Proyek"/>
+            <Property name="text" type="java.lang.String" value="Open Project"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnOpenProjectActionPerformed"/>
@@ -122,7 +122,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="btnDeleteProject">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Hapus Proyek"/>
+            <Property name="text" type="java.lang.String" value="Delete Project"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnDeleteProjectActionPerformed"/>
@@ -130,7 +130,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="btnEditProject">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Edit Proyek"/>
+            <Property name="text" type="java.lang.String" value="Edit Project"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnEditProjectActionPerformed"/>
@@ -159,7 +159,7 @@
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="-2" pref="143" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="153" max="-2" attributes="0"/>
                   <Component id="btnAddProject" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -199,7 +199,7 @@
         </Container>
         <Component class="javax.swing.JButton" name="btnAddProject">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Tambah Proyek"/>
+            <Property name="text" type="java.lang.String" value="Add Project"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAddProjectActionPerformed"/>
