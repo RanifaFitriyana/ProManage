@@ -4,12 +4,13 @@
  */
 package com.promanage.ui;
 
-import javax.swing.*; // Semua komponen GUI seperti JLabel, JTable, JButton, dll
-import java.awt.event.*; // Untuk event seperti ActionListener
-import java.sql.*; // Untuk koneksi database dan query SQL
-import com.promanage.util.DBHelper; // Untuk koneksi DB buatanmu
+import com.promanage.util.DBHelper;
+import com.promanage.util.LanguageManager;
+import java.awt.event.*;
+import java.sql.*;
+import java.util.ResourceBundle;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.JScrollPane;
 
 /**
  *
@@ -28,9 +29,8 @@ public class DashboardFrame extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
         this.username = username;
-//        this.userId = userId;
         this.taskframe = taskframe;
-        lblWelcome.setText("Selamat datang, " + username);
+        updateTexts();
         tblProjects.setDefaultEditor(Object.class, null);
         tblProjects.addMouseListener(new MouseAdapter() {
         });
@@ -42,9 +42,35 @@ public class DashboardFrame extends javax.swing.JFrame {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
+    private void updateTexts() {
+        ResourceBundle bundle = LanguageManager.getBundle();
+
+        setTitle(bundle.getString("DashboardFrame.title"));
+        lblWelcome.setText(bundle.getString("DashboardFrame.welcome") + ", " + username);
+        btnLogout.setText(bundle.getString("DashboardFrame.btnLogout"));
+        btnAddProject.setText(bundle.getString("DashboardFrame.btnAddProject"));
+        btnEditProject.setText(bundle.getString("DashboardFrame.btnEditProject"));
+        btnOpenProject.setText(bundle.getString("DashboardFrame.btnOpenProject"));
+        btnDeleteProject.setText(bundle.getString("DashboardFrame.btnDeleteProject"));
+
+        DefaultTableModel model = (DefaultTableModel) tblProjects.getModel();
+        model.setColumnIdentifiers(new String[]{
+            bundle.getString("DashboardFrame.tblProjects.id"),
+            bundle.getString("DashboardFrame.tblProjects.name"),
+            bundle.getString("DashboardFrame.tblProjects.desc"),
+            bundle.getString("DashboardFrame.tblProjects.created_at")
+        });
+    }
+
     void loadProjects() {
+        ResourceBundle bundle = LanguageManager.getBundle();
         DefaultTableModel model = new DefaultTableModel();
-        model.setColumnIdentifiers(new String[]{"ID", "Nama Proyek", "Deskripsi", "Dibuat Pada"});
+        model.setColumnIdentifiers(new String[]{
+            bundle.getString("DashboardFrame.tblProjects.id"),
+            bundle.getString("DashboardFrame.tblProjects.name"),
+            bundle.getString("DashboardFrame.tblProjects.desc"),
+            bundle.getString("DashboardFrame.tblProjects.created_at")
+        });
         tblProjects.setModel(model);
 
         try (Connection conn = DBHelper.getConnection()) {
@@ -64,7 +90,8 @@ public class DashboardFrame extends javax.swing.JFrame {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Gagal memuat proyek!", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, bundle.getString("DashboardFrame.msg.project_delete_failed"),
+                    bundle.getString("DashboardFrame.msg.error"), JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -93,7 +120,7 @@ public class DashboardFrame extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(0, 102, 153));
 
-        lblWelcome.setText("Selamat Datang, ");
+        lblWelcome.setText("Wellcome!");
 
         btnLogout.setText("Logout");
         btnLogout.addActionListener(new java.awt.event.ActionListener() {
@@ -109,7 +136,7 @@ public class DashboardFrame extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(18, 18, 18)
                 .addComponent(lblWelcome)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 214, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 249, Short.MAX_VALUE)
                 .addComponent(btnLogout)
                 .addContainerGap())
         );
@@ -125,21 +152,21 @@ public class DashboardFrame extends javax.swing.JFrame {
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_START);
 
-        btnOpenProject.setText("Buka Proyek");
+        btnOpenProject.setText("Open Project");
         btnOpenProject.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnOpenProjectActionPerformed(evt);
             }
         });
 
-        btnDeleteProject.setText("Hapus Proyek");
+        btnDeleteProject.setText("Delete Project");
         btnDeleteProject.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDeleteProjectActionPerformed(evt);
             }
         });
 
-        btnEditProject.setText("Edit Proyek");
+        btnEditProject.setText("Edit Project");
         btnEditProject.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEditProjectActionPerformed(evt);
@@ -153,7 +180,7 @@ public class DashboardFrame extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(btnEditProject)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
                 .addComponent(btnOpenProject)
                 .addGap(52, 52, 52)
                 .addComponent(btnDeleteProject)
@@ -192,7 +219,7 @@ public class DashboardFrame extends javax.swing.JFrame {
         });
         scrollPaneProjects.setViewportView(tblProjects);
 
-        btnAddProject.setText("Tambah Proyek");
+        btnAddProject.setText("Add Project");
         btnAddProject.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAddProjectActionPerformed(evt);
@@ -208,7 +235,7 @@ public class DashboardFrame extends javax.swing.JFrame {
                 .addComponent(scrollPaneProjects, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(143, 143, 143)
+                .addGap(153, 153, 153)
                 .addComponent(btnAddProject)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -233,7 +260,7 @@ public class DashboardFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnLogoutActionPerformed
 
     private void btnAddProjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddProjectActionPerformed
-        this.setVisible(false); // sembunyikan dashboard dulu
+        this.setVisible(false);
         new AddProjectFrame(username, this).setVisible(true);
     }//GEN-LAST:event_btnAddProjectActionPerformed
 
@@ -246,17 +273,21 @@ public class DashboardFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_tblProjectsMouseClicked
 
     private void btnDeleteProjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteProjectActionPerformed
+        ResourceBundle bundle = LanguageManager.getBundle();
         int selectedRow = tblProjects.getSelectedRow();
 
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Pilih proyek yang ingin dihapus.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, bundle.getString("DashboardFrame.msg.select_delete"),
+                    bundle.getString("DashboardFrame.msg.warning"), JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        int confirm = JOptionPane.showConfirmDialog(this, "Apakah kamu yakin ingin menghapus proyek ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+        int confirm = JOptionPane.showConfirmDialog(this,
+                bundle.getString("DashboardFrame.msg.confirm_delete"),
+                bundle.getString("DashboardFrame.msg.confirm"), JOptionPane.YES_NO_OPTION);
 
         if (confirm == JOptionPane.YES_OPTION) {
-            int projectId = (int) tblProjects.getValueAt(selectedRow, 0); // ambil ID dari kolom pertama
+            int projectId = (int) tblProjects.getValueAt(selectedRow, 0);
 
             try (Connection conn = DBHelper.getConnection()) {
                 String sql = "DELETE FROM projects WHERE id = ?";
@@ -264,20 +295,23 @@ public class DashboardFrame extends javax.swing.JFrame {
                 stmt.setInt(1, projectId);
                 stmt.executeUpdate();
 
-                JOptionPane.showMessageDialog(this, "Proyek berhasil dihapus.");
-                loadProjects(); // refresh tabel
+                JOptionPane.showMessageDialog(this, bundle.getString("DashboardFrame.msg.project_deleted"));
+                loadProjects();
             } catch (SQLException e) {
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Gagal menghapus proyek!", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, bundle.getString("DashboardFrame.msg.project_delete_failed"),
+                        bundle.getString("DashboardFrame.msg.error"), JOptionPane.ERROR_MESSAGE);
             }
         }
     }//GEN-LAST:event_btnDeleteProjectActionPerformed
 
     private void btnEditProjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditProjectActionPerformed
+        ResourceBundle bundle = LanguageManager.getBundle();
         int selectedRow = tblProjects.getSelectedRow();
 
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Pilih proyek yang ingin diedit.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, bundle.getString("DashboardFrame.msg.select_edit"),
+                    bundle.getString("DashboardFrame.msg.warning"), JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -290,13 +324,15 @@ public class DashboardFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnEditProjectActionPerformed
 
     private void btnOpenProjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenProjectActionPerformed
+        ResourceBundle bundle = LanguageManager.getBundle();
         int selectedRow = tblProjects.getSelectedRow();
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Pilih proyek yang ingin dibuka.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, bundle.getString("DashboardFrame.msg.select_open"),
+                    bundle.getString("DashboardFrame.msg.warning"), JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        int projectId = (int) tblProjects.getValueAt(selectedRow, 0); // ambil ID proyek
+        int projectId = (int) tblProjects.getValueAt(selectedRow, 0);
         this.setVisible(false);
         new TaskFrame(projectId, this).setVisible(true);
     }//GEN-LAST:event_btnOpenProjectActionPerformed
