@@ -11,6 +11,7 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.io.File;
 import java.sql.*;
+import java.util.ResourceBundle;
 
 /**
  *
@@ -20,15 +21,32 @@ public class AddTaskFrame extends javax.swing.JFrame {
 
     private int projectId;
     private TaskFrame taskframe;
+    private ResourceBundle bundle;
 
-    /**
-     * Creates new form AddTaskFrame
-     */
-    public AddTaskFrame(int projectId, TaskFrame taskframe) {
+    public AddTaskFrame(int projectId, TaskFrame taskframe, ResourceBundle bundle) {
         setLocationRelativeTo(null);
         this.projectId = projectId;
         this.taskframe = taskframe;
+        this.bundle = bundle;
         initComponents();
+        applyLanguage();
+    }
+
+    private void applyLanguage() {
+        setTitle(bundle.getString("add_task.title"));
+        title.setText(bundle.getString("add_task.title"));
+        label_title.setText(bundle.getString("add_task.label_title"));
+        label_description.setText(bundle.getString("add_task.label_description"));
+        label_status.setText(bundle.getString("add_task.label_status"));
+        label_deadline.setText(bundle.getString("add_task.label_deadline"));
+        label_attachment.setText(bundle.getString("add_task.label_attachment"));
+        button_choose_file.setText(bundle.getString("add_task.button_choose_file"));
+        button_save.setText(bundle.getString("add_task.button_save"));
+        button_cancel.setText(bundle.getString("add_task.button_cancel"));
+    }
+
+    AddTaskFrame(int projectId, TaskFrame aThis) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     /**
@@ -41,59 +59,59 @@ public class AddTaskFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        lblTitle = new javax.swing.JLabel();
+        title = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
+        label_title = new javax.swing.JLabel();
+        label_description = new javax.swing.JLabel();
+        label_status = new javax.swing.JLabel();
+        label_deadline = new javax.swing.JLabel();
+        label_attachment = new javax.swing.JLabel();
         txtTitle = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtDescription = new javax.swing.JTextArea();
         cbStatus = new javax.swing.JComboBox<>();
         dateDeadline = new com.toedter.calendar.JDateChooser();
-        btnSave = new javax.swing.JButton();
-        btnCancel = new javax.swing.JButton();
-        btnChooseFile = new javax.swing.JButton();
+        button_save = new javax.swing.JButton();
+        button_cancel = new javax.swing.JButton();
+        button_choose_file = new javax.swing.JButton();
         txtAttachmentPath = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(0, 102, 153));
 
-        lblTitle.setText("TAMBAH TUGAS");
+        title.setText("ADD TASK");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(146, 146, 146)
-                .addComponent(lblTitle)
-                .addContainerGap(166, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(174, Short.MAX_VALUE)
+                .addComponent(title)
+                .addGap(170, 170, 170))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(41, 41, 41)
-                .addComponent(lblTitle)
-                .addContainerGap(43, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(44, Short.MAX_VALUE)
+                .addComponent(title)
+                .addGap(40, 40, 40))
         );
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_START);
 
         jPanel2.setBackground(new java.awt.Color(204, 204, 204));
 
-        jLabel1.setText("Judul Tugas");
+        label_title.setText("Task Title");
 
-        jLabel2.setText("Deskripsi Tugas");
+        label_description.setText("Task Description");
 
-        jLabel3.setText("Status");
+        label_status.setText("Status");
 
-        jLabel4.setText("Deadline");
+        label_deadline.setText("Deadline");
 
-        jLabel5.setText("Lampiran");
+        label_attachment.setText("Attachment");
 
         txtDescription.setColumns(20);
         txtDescription.setRows(5);
@@ -101,24 +119,24 @@ public class AddTaskFrame extends javax.swing.JFrame {
 
         cbStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "TODO", "IN_PROGRESS", "DONE" }));
 
-        btnSave.setText("Simpan");
-        btnSave.addActionListener(new java.awt.event.ActionListener() {
+        button_save.setText("Save");
+        button_save.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSaveActionPerformed(evt);
+                button_saveActionPerformed(evt);
             }
         });
 
-        btnCancel.setText("Batal");
-        btnCancel.addActionListener(new java.awt.event.ActionListener() {
+        button_cancel.setText("Cancel");
+        button_cancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelActionPerformed(evt);
+                button_cancelActionPerformed(evt);
             }
         });
 
-        btnChooseFile.setText("Pilih File");
-        btnChooseFile.addActionListener(new java.awt.event.ActionListener() {
+        button_choose_file.setText("Choose File");
+        button_choose_file.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnChooseFileActionPerformed(evt);
+                button_choose_fileActionPerformed(evt);
             }
         });
 
@@ -130,57 +148,57 @@ public class AddTaskFrame extends javax.swing.JFrame {
                 .addGap(43, 43, 43)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(btnCancel)
+                        .addComponent(button_cancel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnSave))
+                        .addComponent(button_save))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel4)
+                            .addComponent(label_title)
+                            .addComponent(label_deadline)
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jLabel3))
-                            .addComponent(jLabel5))
+                                .addComponent(label_description, javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(label_status))
+                            .addComponent(label_attachment))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
                             .addComponent(cbStatus, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(dateDeadline, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(btnChooseFile)
+                                .addComponent(button_choose_file)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(txtAttachmentPath))
                             .addComponent(txtTitle))))
-                .addContainerGap(37, Short.MAX_VALUE))
+                .addContainerGap(33, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(22, 22, 22)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
+                    .addComponent(label_title)
                     .addComponent(txtTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
+                    .addComponent(label_description))
                 .addGap(20, 20, 20)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
+                    .addComponent(label_status))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4)
+                    .addComponent(label_deadline)
                     .addComponent(dateDeadline, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(btnChooseFile)
+                    .addComponent(label_attachment)
+                    .addComponent(button_choose_file)
                     .addComponent(txtAttachmentPath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCancel)
-                    .addComponent(btnSave))
+                    .addComponent(button_cancel)
+                    .addComponent(button_save))
                 .addContainerGap(22, Short.MAX_VALUE))
         );
 
@@ -190,16 +208,16 @@ public class AddTaskFrame extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnChooseFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChooseFileActionPerformed
+    private void button_choose_fileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_choose_fileActionPerformed
         JFileChooser fileChooser = new JFileChooser();
         int option = fileChooser.showOpenDialog(this);
         if (option == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
             txtAttachmentPath.setText(selectedFile.getAbsolutePath());
         }
-    }//GEN-LAST:event_btnChooseFileActionPerformed
+    }//GEN-LAST:event_button_choose_fileActionPerformed
 
-    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+    private void button_saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_saveActionPerformed
         String title = txtTitle.getText();
         String desc = txtDescription.getText();
         String status = cbStatus.getSelectedItem().toString();
@@ -207,8 +225,8 @@ public class AddTaskFrame extends javax.swing.JFrame {
         String attachment = txtAttachmentPath.getText();
 
         if (title.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Judul tugas wajib diisi.");
-            return; // hentikan proses simpan
+            JOptionPane.showMessageDialog(this, bundle.getString("add_task.message_title_required"));
+            return;
         }
 
         try {
@@ -220,7 +238,7 @@ public class AddTaskFrame extends javax.swing.JFrame {
             try (Connection conn = DBHelper.getConnection()) {
                 String sql = "INSERT INTO tasks (project_id, title, description, status, deadline, attachment_path) VALUES (?, ?, ?, ?, ?, ?)";
                 PreparedStatement stmt = conn.prepareStatement(sql);
-                stmt.setInt(1, projectId); // projectId harus diterima di constructor
+                stmt.setInt(1, projectId);
                 stmt.setString(2, title);
                 stmt.setString(3, desc);
                 stmt.setString(4, status);
@@ -232,41 +250,41 @@ public class AddTaskFrame extends javax.swing.JFrame {
                 stmt.setString(6, attachment.isEmpty() ? null : attachment);
 
                 stmt.executeUpdate();
-                JOptionPane.showMessageDialog(this, "Tugas berhasil ditambahkan!");
-                taskframe.loadTasks(); // refresh daftar tugas
+                JOptionPane.showMessageDialog(this, bundle.getString("add_task.message_success"));
+                taskframe.loadTasks();
                 taskframe.setVisible(true);
                 this.dispose();
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Gagal menyimpan tugas.");
+            JOptionPane.showMessageDialog(this, bundle.getString("add_task.message_fail"));
         }
-    }//GEN-LAST:event_btnSaveActionPerformed
+    }//GEN-LAST:event_button_saveActionPerformed
 
-    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
+    private void button_cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_cancelActionPerformed
         taskframe.setVisible(true);
         this.dispose();
-    }//GEN-LAST:event_btnCancelActionPerformed
+    }//GEN-LAST:event_button_cancelActionPerformed
 
     /**
      * @param args the command line arguments
      */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnCancel;
-    private javax.swing.JButton btnChooseFile;
-    private javax.swing.JButton btnSave;
+    private javax.swing.JButton button_cancel;
+    private javax.swing.JButton button_choose_file;
+    private javax.swing.JButton button_save;
     private javax.swing.JComboBox<String> cbStatus;
     private com.toedter.calendar.JDateChooser dateDeadline;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel lblTitle;
+    private javax.swing.JLabel label_attachment;
+    private javax.swing.JLabel label_deadline;
+    private javax.swing.JLabel label_description;
+    private javax.swing.JLabel label_status;
+    private javax.swing.JLabel label_title;
+    private javax.swing.JLabel title;
     private javax.swing.JTextField txtAttachmentPath;
     private javax.swing.JTextArea txtDescription;
     private javax.swing.JTextField txtTitle;
