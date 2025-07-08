@@ -5,9 +5,11 @@
 package com.promanage.ui;
 
 import com.promanage.util.DBHelper;
+import com.promanage.util.LanguageManager;
 
 import javax.swing.*;
 import java.sql.*;
+import java.util.ResourceBundle;
 
 /**
  *
@@ -25,6 +27,17 @@ public class EditProjectFrame extends javax.swing.JFrame {
         this.parentFrame = parentFrame;
         txtName.setText(projectName);
         txtDescription.setText(description);
+        updateTexts();
+    }
+
+    private void updateTexts() {
+        ResourceBundle bundle = LanguageManager.getBundle();
+        setTitle(bundle.getString("EditProjectFrame.title"));
+        jLabel1.setText(bundle.getString("EditProjectFrame.header"));
+        lblName.setText(bundle.getString("EditProjectFrame.lblName"));
+        lblDesc.setText(bundle.getString("EditProjectFrame.lblDesc"));
+        btnSave.setText(bundle.getString("EditProjectFrame.btnSave"));
+        btnCancel.setText(bundle.getString("EditProjectFrame.btnCancel"));
     }
 
     /**
@@ -51,14 +64,14 @@ public class EditProjectFrame extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(0, 102, 153));
 
-        jLabel1.setText("EDIT PROYEK");
+        jLabel1.setText("EDIT PROJECT");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(167, Short.MAX_VALUE)
+                .addContainerGap(163, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addGap(163, 163, 163))
         );
@@ -74,22 +87,22 @@ public class EditProjectFrame extends javax.swing.JFrame {
 
         jPanel2.setBackground(new java.awt.Color(204, 204, 204));
 
-        lblName.setText("Nama Proyek");
+        lblName.setText("Project Name");
 
-        lblDesc.setText("Deskripsi");
+        lblDesc.setText("Description");
 
         txtDescription.setColumns(20);
         txtDescription.setRows(5);
         scroll.setViewportView(txtDescription);
 
-        btnSave.setText("Simpan");
+        btnSave.setText("Save");
         btnSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSaveActionPerformed(evt);
             }
         });
 
-        btnCancel.setText("Batal");
+        btnCancel.setText("Cancel");
         btnCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelActionPerformed(evt);
@@ -109,16 +122,13 @@ public class EditProjectFrame extends javax.swing.JFrame {
                         .addComponent(btnSave))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                .addComponent(lblName)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(lblDesc)
-                                .addGap(35, 35, 35)))
+                            .addComponent(lblDesc)
+                            .addComponent(lblName))
+                        .addGap(24, 24, 24)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE)
                             .addComponent(txtName))))
-                .addContainerGap(39, Short.MAX_VALUE))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -152,18 +162,18 @@ public class EditProjectFrame extends javax.swing.JFrame {
             stmt.setInt(3, projectId);
             stmt.executeUpdate();
 
-            JOptionPane.showMessageDialog(this, "Proyek berhasil diperbarui.");
+            JOptionPane.showMessageDialog(this, LanguageManager.getBundle().getString("EditProjectFrame.save_success"));
             parentFrame.loadProjects(); // refresh dashboard
             this.dispose();
         } catch (SQLException ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Gagal memperbarui proyek.");
+            JOptionPane.showMessageDialog(this, LanguageManager.getBundle().getString("EditProjectFrame.save_fail"));
         }
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
-        this.dispose(); // tutup form edit
-        parentFrame.setVisible(true); // kembali ke dashboard
+        this.dispose(); 
+        parentFrame.setVisible(true); 
     }//GEN-LAST:event_btnCancelActionPerformed
 
     /**
