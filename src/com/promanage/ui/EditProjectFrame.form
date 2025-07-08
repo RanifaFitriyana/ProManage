@@ -39,7 +39,7 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace pref="167" max="32767" attributes="0"/>
+                  <EmptySpace pref="163" max="32767" attributes="0"/>
                   <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="163" max="-2" attributes="0"/>
               </Group>
@@ -58,7 +58,7 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
-            <Property name="text" type="java.lang.String" value="EDIT PROYEK"/>
+            <Property name="text" type="java.lang.String" value="EDIT PROJECT"/>
           </Properties>
         </Component>
       </SubComponents>
@@ -88,22 +88,17 @@
                       </Group>
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="1" attributes="0">
-                                  <Component id="lblName" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="lblDesc" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
-                              </Group>
+                              <Component id="lblDesc" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblName" min="-2" max="-2" attributes="0"/>
                           </Group>
+                          <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" max="-2" attributes="0">
                               <Component id="scroll" pref="236" max="32767" attributes="0"/>
                               <Component id="txtName" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
-                  <EmptySpace pref="39" max="32767" attributes="0"/>
+                  <EmptySpace pref="27" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -133,12 +128,12 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="lblName">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Nama Proyek"/>
+            <Property name="text" type="java.lang.String" value="Project Name"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="lblDesc">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Deskripsi"/>
+            <Property name="text" type="java.lang.String" value="Description"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="txtName">
@@ -160,7 +155,7 @@
         </Container>
         <Component class="javax.swing.JButton" name="btnSave">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Simpan"/>
+            <Property name="text" type="java.lang.String" value="Save"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSaveActionPerformed"/>
@@ -168,7 +163,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="btnCancel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Batal"/>
+            <Property name="text" type="java.lang.String" value="Cancel"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCancelActionPerformed"/>
