@@ -120,8 +120,10 @@ public class DashboardFrame extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(0, 102, 153));
 
+        lblWelcome.setForeground(new java.awt.Color(204, 204, 204));
         lblWelcome.setText("Wellcome!");
 
+        btnLogout.setBackground(new java.awt.Color(0, 204, 204));
         btnLogout.setText("Logout");
         btnLogout.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -136,9 +138,9 @@ public class DashboardFrame extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(18, 18, 18)
                 .addComponent(lblWelcome)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 249, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 241, Short.MAX_VALUE)
                 .addComponent(btnLogout)
-                .addContainerGap())
+                .addGap(14, 14, 14))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -152,6 +154,7 @@ public class DashboardFrame extends javax.swing.JFrame {
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_START);
 
+        btnOpenProject.setBackground(new java.awt.Color(153, 153, 153));
         btnOpenProject.setText("Open Project");
         btnOpenProject.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -159,6 +162,7 @@ public class DashboardFrame extends javax.swing.JFrame {
             }
         });
 
+        btnDeleteProject.setBackground(new java.awt.Color(153, 153, 153));
         btnDeleteProject.setText("Delete Project");
         btnDeleteProject.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -166,6 +170,7 @@ public class DashboardFrame extends javax.swing.JFrame {
             }
         });
 
+        btnEditProject.setBackground(new java.awt.Color(153, 153, 153));
         btnEditProject.setText("Edit Project");
         btnEditProject.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -219,6 +224,7 @@ public class DashboardFrame extends javax.swing.JFrame {
         });
         scrollPaneProjects.setViewportView(tblProjects);
 
+        btnAddProject.setBackground(new java.awt.Color(153, 255, 153));
         btnAddProject.setText("Add Project");
         btnAddProject.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -235,7 +241,7 @@ public class DashboardFrame extends javax.swing.JFrame {
                 .addComponent(scrollPaneProjects, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(153, 153, 153)
+                .addGap(154, 154, 154)
                 .addComponent(btnAddProject)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
