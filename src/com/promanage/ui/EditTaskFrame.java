@@ -4,10 +4,13 @@
  */
 package com.promanage.ui;
 
+import com.promanage.util.DBHelper;
+import com.promanage.util.LanguageManager;
+
 import javax.swing.*;
 import java.sql.*;
-import com.promanage.util.DBHelper;
 import java.util.Date;
+import java.util.ResourceBundle;
 
 /**
  *
@@ -16,25 +19,36 @@ import java.util.Date;
 public class EditTaskFrame extends javax.swing.JFrame {
 
     private int taskId;
-    private TaskFrame taskframe;
-//    private JComboBox<String> cmbStatus;
-//    private JFormattedTextField txtDeadline;
-//    private JTextField txtAttachment;
+    private TaskFrame parentFrame;
+    private ResourceBundle bundle;
 
-    public EditTaskFrame(int taskId, String title, String description, String status, Date deadline, String attachment, TaskFrame taskframe) {
+    public EditTaskFrame(int taskId, String title, String description, String status, Date deadline, String attachment, TaskFrame parentFrame) {
+        this.taskId = taskId;
+        this.parentFrame = parentFrame;
+        this.bundle = LanguageManager.getBundle();
+
         initComponents();
         setLocationRelativeTo(null);
-        this.taskId = taskId;
-        this.taskframe = taskframe;
-        
+        applyTexts();
+
         txtTitle.setText(title);
         txtDescription.setText(description);
         cbStatus.setSelectedItem(status);
         dateDeadline.setDate(deadline);
         txtAttachmentPath.setText(attachment);
-        
+    }
 
-        taskframe.loadTasks();
+    private void applyTexts() {
+        setTitle(bundle.getString("EditTaskFrame.title"));
+        title.setText(bundle.getString("EditTaskFrame.header"));
+        lblTitle.setText(bundle.getString("EditTaskFrame.lblTitle"));
+        lblDesc.setText(bundle.getString("EditTaskFrame.lblDesc"));
+        lblStatus.setText(bundle.getString("EditTaskFrame.lblStatus"));
+        lblDeadline.setText(bundle.getString("EditTaskFrame.lblDeadline"));
+        lblAttachment.setText(bundle.getString("EditTaskFrame.lblAttachment"));
+        btnChoose.setText(bundle.getString("EditTaskFrame.btnChoose"));
+        btnSave.setText(bundle.getString("EditTaskFrame.btnSave"));
+        btnCancel.setText(bundle.getString("EditTaskFrame.btnCancel"));
     }
 
     /**
@@ -47,20 +61,20 @@ public class EditTaskFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        title = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
+        lblTitle = new javax.swing.JLabel();
         txtTitle = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
+        lblDesc = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtDescription = new javax.swing.JTextArea();
-        jLabel4 = new javax.swing.JLabel();
+        lblStatus = new javax.swing.JLabel();
         cbStatus = new javax.swing.JComboBox<>();
         dateDeadline = new com.toedter.calendar.JDateChooser();
-        jLabel5 = new javax.swing.JLabel();
-        btnChooseFile = new javax.swing.JToggleButton();
+        lblDeadline = new javax.swing.JLabel();
+        btnChoose = new javax.swing.JToggleButton();
         txtAttachmentPath = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
+        lblAttachment = new javax.swing.JLabel();
         btnCancel = new javax.swing.JButton();
         btnSave = new javax.swing.JButton();
 
@@ -68,55 +82,60 @@ public class EditTaskFrame extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(0, 102, 153));
 
-        jLabel1.setText("EDIT TUGAS");
+        title.setBackground(new java.awt.Color(0, 0, 0));
+        title.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        title.setForeground(new java.awt.Color(204, 204, 204));
+        title.setText("EDIT TASK");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(172, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(164, 164, 164))
+                .addContainerGap(147, Short.MAX_VALUE)
+                .addComponent(title)
+                .addGap(135, 135, 135))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(43, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(41, 41, 41))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(39, 39, 39)
+                .addComponent(title)
+                .addContainerGap(45, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_START);
 
         jPanel2.setBackground(new java.awt.Color(204, 204, 204));
 
-        jLabel2.setText("Judul Tugas");
+        lblTitle.setText("Task Title");
 
-        jLabel3.setText("Deskripsi Tugas");
+        lblDesc.setText("Task Description");
 
         txtDescription.setColumns(20);
         txtDescription.setRows(5);
         jScrollPane1.setViewportView(txtDescription);
 
-        jLabel4.setText("Status");
+        lblStatus.setText("Status");
 
         cbStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "TODO", "IN_PROGRESS", "DONE" }));
 
-        jLabel5.setText("Deadline");
+        lblDeadline.setText("Deadline");
 
-        btnChooseFile.setText("Pilih File");
+        btnChoose.setText("Choose File");
 
-        jLabel6.setText("Lampiran");
+        lblAttachment.setText("Attachment");
 
-        btnCancel.setText("Batal");
+        btnCancel.setBackground(new java.awt.Color(255, 102, 102));
+        btnCancel.setText("Cancel");
         btnCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelActionPerformed(evt);
             }
         });
 
-        btnSave.setText("Simpan");
+        btnSave.setBackground(new java.awt.Color(153, 255, 153));
+        btnSave.setText("Save");
         btnSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSaveActionPerformed(evt);
@@ -140,53 +159,53 @@ public class EditTaskFrame extends javax.swing.JFrame {
                             .addComponent(txtTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel2)
-                                    .addComponent(jLabel4)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel5)
-                                    .addComponent(jLabel6))
+                                    .addComponent(lblTitle)
+                                    .addComponent(lblStatus)
+                                    .addComponent(lblDesc)
+                                    .addComponent(lblDeadline)
+                                    .addComponent(lblAttachment))
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel2Layout.createSequentialGroup()
                                         .addGap(30, 30, 30)
                                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGap(29, 29, 29)
                                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(dateDeadline, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                                .addComponent(btnChooseFile, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(txtAttachmentPath, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                            .addComponent(dateDeadline, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                                .addComponent(btnChoose)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(txtAttachmentPath, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))))))
                             .addComponent(cbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(35, Short.MAX_VALUE))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(19, 19, 19)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
+                    .addComponent(lblTitle)
                     .addComponent(txtTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
+                    .addComponent(lblDesc)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4)
+                    .addComponent(lblStatus)
                     .addComponent(cbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(dateDeadline, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5))
+                    .addComponent(lblDeadline))
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(20, 20, 20)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtAttachmentPath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnChooseFile)
-                            .addComponent(jLabel6))
-                        .addContainerGap(56, Short.MAX_VALUE))
+                            .addComponent(btnChoose)
+                            .addComponent(lblAttachment))
+                        .addContainerGap(54, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -204,40 +223,38 @@ public class EditTaskFrame extends javax.swing.JFrame {
         String title = txtTitle.getText();
         String description = txtDescription.getText();
         String status = cbStatus.getSelectedItem().toString();
-        java.util.Date utilDate = dateDeadline.getDate();
-        if (utilDate == null) {
-            JOptionPane.showMessageDialog(this, "Deadline tidak boleh kosong.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+        Date deadline = dateDeadline.getDate();
+        String attachment = txtAttachmentPath.getText();
+
+        if (title.isEmpty() || deadline == null) {
+            JOptionPane.showMessageDialog(this, bundle.getString("EditTaskFrame.msgEmptyField"));
             return;
         }
-        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-        String attachmentPath = txtAttachmentPath.getText();
 
         try (Connection conn = DBHelper.getConnection()) {
-            String sql = "UPDATE tasks SET title = ?, description = ?, status = ?, deadline = ?, attachment_path = ? WHERE id = ?";
+            String sql = "UPDATE tasks SET title=?, description=?, status=?, deadline=?, attachment_path=? WHERE id=?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, title);
             stmt.setString(2, description);
             stmt.setString(3, status);
-            stmt.setDate(4, sqlDate);
-            stmt.setString(5, attachmentPath);
+            stmt.setDate(4, new java.sql.Date(deadline.getTime()));
+            stmt.setString(5, attachment);
             stmt.setInt(6, taskId);
 
             stmt.executeUpdate();
-
-            JOptionPane.showMessageDialog(this, "Tugas berhasil diperbarui.");
-            taskframe.loadTasks(); // ✅ gunakan variabel yang benar
-            this.dispose(); // Tutup frame edit
-            taskframe.setVisible(true);
-            
-        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, bundle.getString("EditTaskFrame.msgSuccess"));
+            parentFrame.loadTasks();
+            this.dispose();
+            parentFrame.setVisible(true);
+        } catch (SQLException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Gagal menyimpan perubahan!", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, bundle.getString("EditTaskFrame.msgError"));
         }
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
         this.dispose();
-        taskframe.setVisible(true);
+        parentFrame.setVisible(true);
     }//GEN-LAST:event_btnCancelActionPerformed
 
     /**
@@ -250,53 +267,21 @@ public class EditTaskFrame extends javax.swing.JFrame {
         }
     }
 
-//    private void saveTask() {
-//        String title = txtTitle.getText().trim();
-//        String description = txtDescription.getText().trim();
-//        String status = cmbStatus.getSelectedItem().toString();
-//        String deadlineStr = txtDeadline.getText().trim();
-//        String attachmentPath = txtAttachment.getText().trim();
-//
-//        if (title.isEmpty() || deadlineStr.isEmpty()) {
-//            JOptionPane.showMessageDialog(this, "Judul dan deadline tidak boleh kosong.", "Peringatan", JOptionPane.WARNING_MESSAGE);
-//            return;
-//        }
-//
-//        try (Connection conn = DBHelper.getConnection()) {
-//            String sql = "UPDATE tasks SET title = ?, description = ?, status = ?, deadline = ?, attachment_path = ? WHERE id = ?";
-//            PreparedStatement stmt = conn.prepareStatement(sql);
-//            stmt.setString(1, title);
-//            stmt.setString(2, description);
-//            stmt.setString(3, status);
-//            stmt.setDate(4, java.sql.Date.valueOf(deadlineStr));
-//            stmt.setString(5, attachmentPath);
-//            stmt.setInt(6, taskId);
-//            stmt.executeUpdate();
-//
-//            JOptionPane.showMessageDialog(this, "Tugas berhasil diperbarui.");
-//            taskframe.loadTasks(); // refresh tabel tugas
-//            dispose();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            JOptionPane.showMessageDialog(this, "Gagal menyimpan perubahan!", "Error", JOptionPane.ERROR_MESSAGE);
-//        }
-//    }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
-    private javax.swing.JToggleButton btnChooseFile;
+    private javax.swing.JToggleButton btnChoose;
     private javax.swing.JButton btnSave;
     private javax.swing.JComboBox<String> cbStatus;
     private com.toedter.calendar.JDateChooser dateDeadline;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblAttachment;
+    private javax.swing.JLabel lblDeadline;
+    private javax.swing.JLabel lblDesc;
+    private javax.swing.JLabel lblStatus;
+    private javax.swing.JLabel lblTitle;
+    private javax.swing.JLabel title;
     private javax.swing.JTextField txtAttachmentPath;
     private javax.swing.JTextArea txtDescription;
     private javax.swing.JTextField txtTitle;
