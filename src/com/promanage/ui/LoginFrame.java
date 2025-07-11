@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import com.promanage.util.CryptoUtil;
 import com.promanage.util.DBHelper;
+import com.promanage.util.LanguageManager;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -45,8 +46,8 @@ public class LoginFrame extends javax.swing.JFrame {
         try {
             resourceBundle = ResourceBundle.getBundle("com.promanage.i18n.Bundle", currentLocale);
 
-            // Debug: Periksa apakah ResourceBundle dimuat dengan benar
-            System.out.println("ResourceBundle dimuat untuk lokal: " + currentLocale);
+            // Set locale secara global ke LanguageManager
+            LanguageManager.setLocale(currentLocale);
 
             // Set teks label dan tombol
             lblLoginTitle.setText(resourceBundle.getString("LoginFrame.lblLoginTitle.text"));
@@ -56,7 +57,6 @@ public class LoginFrame extends javax.swing.JFrame {
             btnToRegister.setText(resourceBundle.getString("LoginFrame.btnToRegister.text"));
             lblLoginError.setText("");
 
-            // Perbarui model combobox tanpa memicu pendengar tindakan
             String[] langs = {
                 resourceBundle.getString("LoginFrame.cbLanguage.0"),
                 resourceBundle.getString("LoginFrame.cbLanguage.1")
@@ -64,16 +64,14 @@ public class LoginFrame extends javax.swing.JFrame {
             cbLanguage.setModel(new javax.swing.DefaultComboBoxModel<>(langs));
             cbLanguage.setSelectedIndex(selectedLang);
 
-            // Paksa repaint keseluruhan frame
             this.repaint();
         } catch (MissingResourceException e) {
-            System.err.println("Sumber daya hilang: " + e.getKey());
             e.printStackTrace();
         }
 
         isChangingLanguage = false;
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -99,6 +97,8 @@ public class LoginFrame extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(0, 102, 153));
 
+        lblLoginTitle.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lblLoginTitle.setForeground(new java.awt.Color(204, 204, 204));
         lblLoginTitle.setText("LOGIN");
 
         cbLanguage.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "English", "Indonesia" }));
@@ -129,7 +129,7 @@ public class LoginFrame extends javax.swing.JFrame {
                 .addComponent(lblLoginTitle)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(cbLanguage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(11, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_START);
@@ -140,6 +140,7 @@ public class LoginFrame extends javax.swing.JFrame {
 
         lblPassword.setText("Password");
 
+        btnLogin.setBackground(new java.awt.Color(153, 255, 153));
         btnLogin.setText("Login");
         btnLogin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -147,6 +148,7 @@ public class LoginFrame extends javax.swing.JFrame {
             }
         });
 
+        btnToRegister.setBackground(new java.awt.Color(255, 102, 102));
         btnToRegister.setText("Register");
         btnToRegister.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -161,11 +163,11 @@ public class LoginFrame extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(103, Short.MAX_VALUE)
+                .addContainerGap(141, Short.MAX_VALUE)
                 .addComponent(btnToRegister)
-                .addGap(49, 49, 49)
+                .addGap(18, 18, 18)
                 .addComponent(btnLogin)
-                .addGap(103, 103, 103))
+                .addGap(134, 134, 134))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -227,6 +229,8 @@ public class LoginFrame extends javax.swing.JFrame {
 
                 if (hashInput.equals(hashFromDB)) {
                     lblLoginError.setText(resourceBundle.getString("LoginFrame.login.success"));
+
+                    // Buka dashboard dengan locale yang sudah diset
                     new DashboardFrame(username, null).setVisible(true);
                     this.dispose();
                 } else {
@@ -248,7 +252,6 @@ public class LoginFrame extends javax.swing.JFrame {
 
     private void cbLanguageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbLanguageActionPerformed
         if (!isChangingLanguage) {
-            System.out.println("Mengubah bahasa...");
             applyLanguage();
         }
     }//GEN-LAST:event_cbLanguageActionPerformed
